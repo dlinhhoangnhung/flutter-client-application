@@ -61,7 +61,9 @@ class _TicketPageState extends State<TicketPage> {
               break;
             case Status.COMPLETED:
               print('completed');
-              return _cartPage(snapshot);
+              return snapshot.data.data != null
+                  ? _cartPage(snapshot)
+                  : _emptyCart();
               break;
             case Status.ERROR:
               return Error(
@@ -75,6 +77,29 @@ class _TicketPageState extends State<TicketPage> {
     );
   }
 
+  _emptyCart() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ticket'),
+        centerTitle: true,
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        textBaseline: TextBaseline.ideographic,
+        children: <Widget>[
+          Center(
+            child: Text(
+              'Không có vé trong giỏ hàng!',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   _cartPage(snapshot) {
     return Scaffold(
         appBar: AppBar(
@@ -85,8 +110,10 @@ class _TicketPageState extends State<TicketPage> {
           onTap: () async {
             BookingRepository rep = new BookingRepository();
             await rep.complete(snapshot.data.data.sId);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => PaymentSuccessScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PaymentSuccessScreen()));
           },
           child: Container(
             height: 80,
