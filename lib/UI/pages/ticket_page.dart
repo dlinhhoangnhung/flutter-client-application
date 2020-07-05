@@ -18,13 +18,14 @@ import 'package:flutter_travel_ui/widgets/ticket_widget.dart';
 import 'package:intl/intl.dart';
 
 class TicketPage extends StatefulWidget {
+
   @override
   _TicketPageState createState() => _TicketPageState();
 }
 
 class _TicketPageState extends State<TicketPage> {
   BookingBloc _bloc;
-
+  String token;
   getToken() async {
     final _storage = FlutterSecureStorage();
     return await _storage.read(key: "token");
@@ -49,31 +50,36 @@ class _TicketPageState extends State<TicketPage> {
 
   cartScreen() {
     final _storage = FlutterSecureStorage();
-      _storage.read(key: "token").then((value) => _bloc.fetchCart(value));
-    return StreamBuilder<Response<Booking>>(
-      stream: _bloc.bookingDataStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          switch (snapshot.data.status) {
-            case Status.LOADING:
-              print('loading');
-              return Loading(loadingMessage: snapshot.data.message);
-              break;
-            case Status.COMPLETED:
-              print('completed');
-              return snapshot.data.data != null
-                  ? _cartPage(snapshot)
-                  : _emptyCart();
-              break;
-            case Status.ERROR:
-              return Error(
-                errorMessage: snapshot.data.message,
-              );
-              break;
+      _storage.read(key: "token").then((value) => {
+        _bloc.fetchCart(value),token = value
+      });
+    return RefreshIndicator(
+      onRefresh:  ()=> _storage.read(key: "token").then((value) => {
+        _bloc.fetchCart(value),token = value
+      }),
+          child: StreamBuilder<Response<Booking>>(
+        stream: _bloc.bookingDataStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            switch (snapshot.data.status) {
+              case Status.LOADING:
+                print('loading');
+                return Loading(loadingMessage: snapshot.data.message);
+                break;
+              case Status.COMPLETED:
+                print('completed');
+                return snapshot.data.data != null
+                    ? _cartPage(snapshot)
+                    : _emptyCart();
+                break;
+              case Status.ERROR:
+                return _emptyCart();
+                break;
+            }
           }
-        }
-        return Container();
-      },
+          return Container();
+        },
+      ),
     );
   }
 
