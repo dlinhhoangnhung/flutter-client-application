@@ -45,8 +45,7 @@ class BookingRepository {
     return Booking.fromJson(response['data']);
   }
   Future<Booking> complete(String cart) async {
-   
-    final response = await _provider.get('/booking/complete/'+cart);
+    final response = await _provider.get('api/booking/complete/'+cart);
     return Booking.fromJson(response['data']);
   }
 }

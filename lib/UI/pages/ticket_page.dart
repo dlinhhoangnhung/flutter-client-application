@@ -49,7 +49,7 @@ class _TicketPageState extends State<TicketPage> {
 
   cartScreen() {
     final _storage = FlutterSecureStorage();
-    _storage.read(key: "token").then((value) => _bloc.fetchCart(value));
+      _storage.read(key: "token").then((value) => _bloc.fetchCart(value));
     return StreamBuilder<Response<Booking>>(
       stream: _bloc.bookingDataStream,
       builder: (context, snapshot) {
@@ -109,6 +109,7 @@ class _TicketPageState extends State<TicketPage> {
         bottomNavigationBar: InkWell(
           onTap: () async {
             BookingRepository rep = new BookingRepository();
+            print(snapshot.data.data.sId);
             await rep.complete(snapshot.data.data.sId);
             Navigator.push(
                 context,
