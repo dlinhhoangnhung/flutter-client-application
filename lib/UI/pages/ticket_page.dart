@@ -18,7 +18,6 @@ import 'package:flutter_travel_ui/widgets/ticket_widget.dart';
 import 'package:intl/intl.dart';
 
 class TicketPage extends StatefulWidget {
-
   @override
   _TicketPageState createState() => _TicketPageState();
 }
@@ -50,14 +49,14 @@ class _TicketPageState extends State<TicketPage> {
 
   cartScreen() {
     final _storage = FlutterSecureStorage();
-      _storage.read(key: "token").then((value) => {
-        _bloc.fetchCart(value),token = value
-      });
+    _storage
+        .read(key: "token")
+        .then((value) => {_bloc.fetchCart(value), token = value});
     return RefreshIndicator(
-      onRefresh:  ()=> _storage.read(key: "token").then((value) => {
-        _bloc.fetchCart(value),token = value
-      }),
-          child: StreamBuilder<Response<Booking>>(
+      onRefresh: () => _storage
+          .read(key: "token")
+          .then((value) => {_bloc.fetchCart(value), token = value}),
+      child: StreamBuilder<Response<Booking>>(
         stream: _bloc.bookingDataStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -121,6 +120,9 @@ class _TicketPageState extends State<TicketPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => PaymentSuccessScreen()));
+            FlutterSecureStorage()
+                .read(key: "token")
+                .then((value) => {_bloc.fetchCart(value), token = value});
           },
           child: Container(
             height: 80,
